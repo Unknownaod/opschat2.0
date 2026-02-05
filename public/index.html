@@ -5,33 +5,57 @@
 <title>Chatsphere - Welcome</title>
 <style>
   body {
+    margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    margin: 0; height: 100vh; display: flex;
-    justify-content: center; align-items: center; color: #fff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* warm sunset gradient */
+    color: #fff;
   }
   .homepage {
-    text-align: center; background: rgba(0,0,0,0.3);
-    padding: 50px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    background: rgba(0,0,0,0.2);
+    padding: 60px;
+    border-radius: 30px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
   }
-  h1 { font-size: 3em; margin-bottom: 20px; }
-  p { font-size: 1.2em; margin-bottom: 40px; }
+  h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 10px rgba(0,0,0,0.3);
+  }
+  p {
+    font-size: 1.3em;
+    margin-bottom: 40px;
+  }
   .buttons a {
-    text-decoration: none; padding: 15px 30px; margin: 0 10px;
-    border-radius: 10px; background: #fff; color: #2575fc; font-weight: bold;
-    transition: transform 0.2s, background 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    padding: 15px 40px;
+    margin: 0 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #ff7e5f;
+    background: #fff;
+    transition: 0.3s all;
   }
-  .buttons a:hover { transform: scale(1.05); background: #f0f0f0; }
+  .buttons a:hover {
+    transform: scale(1.1);
+    background: rgba(255,255,255,0.9);
+  }
 </style>
 </head>
 <body>
-  <div class="homepage">
-    <h1>Chatsphere</h1>
-    <p>Secure, fast, and fun messaging for everyone.</p>
-    <div class="buttons">
-      <a href="register.html">Sign Up</a>
-      <a href="login.html">Log In</a>
-    </div>
+<div class="homepage">
+  <h1>Chatsphere</h1>
+  <p>Secure, fast, and vibrant messaging for everyone.</p>
+  <div class="buttons">
+    <a href="register.html">Sign Up</a>
+    <a href="login.html">Log In</a>
   </div>
+</div>
 </body>
 </html>
