@@ -1,5 +1,5 @@
 // =======================
-// AUTH.JS - Login & Register with Backend
+// AUTH.JS - Secure Login & Register
 // =======================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,10 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const BACKEND_URL = 'https://opschat-backend.onrender.com';
 
-  // LOGIN FORM
+  function saveSession(token, username) {
+    localStorage.setItem('chatsphere_token', token);
+    localStorage.setItem('chatsphere_user', username);
+  }
+
+  // LOGIN
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
@@ -29,12 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await res.json();
 
-        if (data.success) {
-          localStorage.setItem('chatsphere_user', username);
-          window.location.href = 'chat.html';
-        } else {
-          alert(data.error || 'Login failed.');
+        if (!res.ok || !data.token) {
+          return alert(data.error || 'Login failed.');
         }
+
+        saveSession(data.token, data.username);
+        window.location.href = 'chat.html';
+
       } catch (err) {
         console.error(err);
         alert('Failed to connect to server.');
@@ -42,10 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // REGISTER FORM
+  // REGISTER
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const username = document.getElementById('username').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -64,13 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await res.json();
 
-        if (data.success) {
-          localStorage.setItem('chatsphere_user', username);
-          alert('Registered successfully!');
-          window.location.href = 'chat.html';
-        } else {
-          alert(data.error || 'Registration failed.');
+        if (!res.ok || !data.token) {
+          return alert(data.error || 'Registration failed.');
         }
+
+        saveSession(data.token, data.username);
+        window.location.href = 'chat.html';
+
       } catch (err) {
         console.error(err);
         alert('Failed to connect to server.');
