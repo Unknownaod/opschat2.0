@@ -65,46 +65,19 @@ body {
 #chatList li:hover { background: #eef2f8; }
 #chatList li.active { background: #dfe9ff; }
 
-.chat-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #4ea4ff;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-}
-
-.chat-meta { flex: 1; }
-.chat-name { font-weight: 600; }
-.chat-last { font-size: .85rem; color: #667085; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-#newChatBtn {
+#newChatBtn, #logoutBtn {
   margin: 10px;
   padding: 12px;
   border: none;
   border-radius: 12px;
-  background: #4ea4ff;
-  color: white;
   font-weight: 600;
   cursor: pointer;
 }
 
+#newChatBtn { background: #4ea4ff; color: white; }
 #newChatBtn:hover { background: #3a91ec; }
 
-#logoutBtn {
-  margin: 10px;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: #ed4245;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
+#logoutBtn { background: #ed4245; color: white; }
 #logoutBtn:hover { background: #c63436; }
 
 /* ===== Chat Window ===== */
@@ -126,8 +99,21 @@ body {
   gap: 12px;
 }
 
+.chat-header .chat-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #4ea4ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
 .chat-header .title { font-weight: 600; }
 
+/* Empty State */
 #emptyState {
   flex: 1;
   display: flex;
@@ -137,6 +123,7 @@ body {
   font-size: 1.2rem;
 }
 
+/* Messages */
 #messages {
   flex: 1;
   overflow-y: auto;
@@ -222,6 +209,7 @@ body {
 <body>
 <div class="app">
 
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <input type="text" placeholder="Search" />
@@ -233,15 +221,20 @@ body {
     <button id="logoutBtn">Logout</button>
   </aside>
 
+  <!-- Chat Window -->
   <section class="chat-window">
     <div class="chat-header">
       <div class="chat-avatar">?</div>
       <div class="title">Select a chat</div>
     </div>
 
+    <!-- Empty State shown when no chat is open -->
     <div id="emptyState">No Chat Currently Open</div>
+
+    <!-- Messages container -->
     <div id="messages"></div>
 
+    <!-- Message input -->
     <form id="messageForm">
       <button type="button" class="icon-btn">😊</button>
       <button type="button" class="icon-btn">📎</button>
@@ -254,16 +247,9 @@ body {
 
 <script>
   const token = localStorage.getItem('chatsphere_token');
-
-  // ===== AUTH CHECK =====
-  if (!token) {
-    window.location.href = '/login.html';
-  }
+  if (!token) window.location.href = '/login.html';
 </script>
-
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/chat.js"></script>
-
-
 </body>
 </html>
