@@ -3,100 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <title>Chatsphere - Call</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body {
+:root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-dark: #1d4ed8;
+    --danger: #ef4444;
+    --danger-dark: #b91c1c;
+    --border: #e5e7eb;
+}
+
+body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, #232526, #414345); /* dark professional gradient */
-    color: #fff;
-  }
+    height: 100vh;
+}
 
-  .call-header {
-    padding: 20px;
+/* ---------- Header ---------- */
+.call-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
     text-align: center;
-    font-size: 1.5em;
+    padding: 16px 24px;
+    font-size: 1.5rem;
     font-weight: 600;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-  }
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
 
-  .call-main {
+/* ---------- Call Area ---------- */
+.call-main {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-  }
+    padding: 24px;
+    gap: 24px;
+    flex-wrap: wrap;
+}
 
-  video {
-    width: 60%;
-    max-width: 800px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  }
+video {
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    background: #000;
+    max-width: 45%;
+    min-width: 300px;
+    height: auto;
+}
 
-  .controls {
+/* ---------- Controls ---------- */
+.controls {
     position: absolute;
-    bottom: 30px;
+    bottom: 32px;
     display: flex;
-    gap: 15px;
-  }
+    gap: 16px;
+}
 
-  .controls button {
-    border-radius: 50%;
+.controls button {
     width: 60px;
     height: 60px;
-    font-size: 1.3em;
-    font-weight: bold;
+    border-radius: 50%;
     border: none;
+    font-size: 1.3rem;
     cursor: pointer;
-    background: rgba(255,255,255,0.1);
+    font-weight: bold;
     color: #fff;
-    transition: 0.3s;
-  }
-  .controls button:hover { transform: scale(1.15); background: rgba(255,255,255,0.25); }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s, background 0.2s;
+}
 
-  .controls .mute { background: #4facfe; }
-  .controls .mute:hover { background: #00f2fe; }
+/* Control Colors */
+.controls .mute {
+    background: var(--accent);
+}
+.controls .mute:hover { background: var(--accent-dark); }
 
-  .controls .end { background: #ff4d4f; }
-  .controls .end:hover { background: #c70000; }
+.controls .end {
+    background: var(--danger);
+}
+.controls .end:hover { background: var(--danger-dark); }
 
-  .controls .video { background: #6a11cb; }
-  .controls .video:hover { background: #4e0fa1; }
+.controls .video {
+    background: #6b21a8;
+}
+.controls .video:hover { background: #4c1d95; }
+
+.controls button:hover {
+    transform: scale(1.15);
+}
 </style>
-
 </head>
 <body>
+
 <div class="call-header">Calling: John Doe</div>
+
 <div class="call-main">
-  <video id="localVideo" autoplay muted></video>
-  <video id="remoteVideo" autoplay></video>
-  <div class="controls">
-    <button class="mute">🎤</button>
-    <button class="end">📞</button>
-    <button class="video">🎥</button>
-  </div>
+    <video id="localVideo" autoplay muted playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+
+    <div class="controls">
+        <button class="mute" title="Mute/Unmute">🎤</button>
+        <button class="end" title="End Call">📞</button>
+        <button class="video" title="Toggle Video">🎥</button>
+    </div>
 </div>
+
 <script>
-  // Placeholder JS for WebRTC integration
-  const localVideo = document.getElementById('localVideo');
-  const remoteVideo = document.getElementById('remoteVideo');
+const localVideo = document.getElementById('localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
 
-  async function initLocalVideo() {
+// Initialize local video
+async function initLocalVideo() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      localVideo.srcObject = stream;
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localVideo.srcObject = stream;
+        // For demonstration, attach same stream to remote video (remove in production)
+        // remoteVideo.srcObject = stream;
     } catch (err) {
-      console.error('Error accessing camera/microphone:', err);
+        console.error('Error accessing camera/microphone:', err);
     }
-  }
+}
 
-  initLocalVideo();
+initLocalVideo();
 </script>
+
 </body>
 </html>
