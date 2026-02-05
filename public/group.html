@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatsphere - Group Chat</title>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3); /* pink gradient */
+  }
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #6a11cb, #2575fc); /* purple-blue gradient */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  .sidebar h3 { margin: 0 0 20px 0; font-size: 1.5em; text-shadow: 1px 1px 5px rgba(0,0,0,0.4); }
+  #groupList { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
+  #groupList li {
+    padding: 12px; margin-bottom: 8px;
+    border-radius: 12px; cursor: pointer; transition: 0.2s;
+  }
+  #groupList li:hover { background: rgba(255,255,255,0.2); }
+
+  .chat-window {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 20px;
+    background: linear-gradient(180deg, #ffffff, #e0e0e0);
+  }
+  #messages { flex: 1; overflow-y: auto; margin-bottom: 10px; }
+  #messages p {
+    padding: 8px 12px;
+    border-radius: 15px;
+    margin: 6px 0;
+    max-width: 70%;
+    word-break: break-word;
+  }
+  #messages p:nth-child(odd) { background: #2575fc; color: #fff; align-self: flex-start; }
+  #messages p:nth-child(even) { background: #d1d1d1; align-self: flex-end; }
+
+  form { display: flex; margin-top: 10px; }
+  #messageInput { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ccc; }
+  button {
+    padding: 12px 18px; margin-left: 5px;
+    border: none; border-radius: 12px; background: #2575fc; color: #fff;
+    cursor: pointer; transition: 0.2s;
+  }
+  button:hover { background: #1458a3; }
+  #fileInput { margin-left: 5px; }
+  #logoutBtn { margin-top: 15px; background: #ff4d4f; }
+  #logoutBtn:hover { background: #c70000; }
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <h3>Groups</h3>
+  <ul id="groupList">
+    <li>Friends Group</li>
+    <li>Work</li>
+    <li>Gaming</li>
+  </ul>
+</div>
+<div class="chat-window">
+  <div id="messages"></div>
+  <form id="messageForm">
+    <input type="text" id="messageInput" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+    <input type="file" id="fileInput" accept="image/*,video/*">
+  </form>
+  <button id="logoutBtn">Logout</button>
+</div>
+<script src="js/utils.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>
