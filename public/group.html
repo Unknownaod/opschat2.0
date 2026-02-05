@@ -3,127 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <title>Chatsphere - Group Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    display: flex;
-    height: 100vh;
-    background: linear-gradient(135deg, #f0f4f8, #d9e2ec); /* light professional gradient */
-  }
+:root {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --danger: #ef4444;
+  --danger-dark: #b91c1c;
+  --border: #e5e7eb;
+}
 
-  /* Sidebar */
-  .sidebar {
-    width: 250px;
-    background: linear-gradient(180deg, #4facfe, #00f2fe); /* teal gradient */
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    border-radius: 0 20px 20px 0;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.05);
-  }
-  .sidebar h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.5em;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-  }
-  #chatList li, #groupList li {
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  #chatList li:hover, #groupList li:hover { background: rgba(255,255,255,0.15); }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  background: var(--bg);
+  display: flex;
+  height: 100vh;
+  color: var(--text);
+}
 
-  /* Chat window */
-  .chat-window {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 20px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
-    position: relative;
-  }
-  #messages { flex: 1; overflow-y: auto; margin-bottom: 10px; }
-  #messages p {
-    padding: 10px 15px;
-    border-radius: 20px;
-    margin: 6px 0;
-    max-width: 70%;
-    word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  #messages p:nth-child(odd) { background: #4facfe; color: #fff; align-self: flex-start; }
-  #messages p:nth-child(even) { background: #e0e0e0; align-self: flex-end; }
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
 
-  /* Form & inputs */
-  form { display: flex; margin-top: 10px; position: relative; }
-  #messageInput {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-    font-size: 1em;
-  }
+.sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.25rem;
+}
 
-  button {
-    border-radius: 20px;
-    background: #4facfe;
-    color: #fff;
-    padding: 12px 18px;
-    margin-left: 5px;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
-  }
-  button:hover { background: #00f2fe; }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-  #emojiBtn, #stickerBtn {
-    width: 45px; height: 45px;
-    font-size: 1.2em;
-    background: #6a11cb;
-    border-radius: 50%;
-  }
-  #emojiBtn:hover, #stickerBtn:hover { background: #4e0fa1; }
+.sidebar li {
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-  /* Emoji & Sticker Panels */
-  #emojiPanel, #stickerPanel {
-    position: absolute;
-    bottom: 60px;
-    left: 10px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 10px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    display: none;
-    max-width: 300px;
-  }
-  #emojiPanel span, #stickerPanel img {
-    cursor: pointer;
-    font-size: 1.5em;
-    transition: 0.2s;
-  }
-  #emojiPanel span:hover, #stickerPanel img:hover { transform: scale(1.2); }
+.sidebar li:hover {
+  background: var(--accent);
+  color: #fff;
+}
 
-  /* Logout button */
-  #logoutBtn {
-    margin-top: 15px;
-    background: #ff4d4f;
-  }
-  #logoutBtn:hover { background: #c70000; }
+/* Chat window */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border-radius: 0 20px 20px 0;
+  padding: 20px;
+  position: relative;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#messages p {
+  padding: 10px 16px;
+  border-radius: 16px;
+  max-width: 70%;
+  word-break: break-word;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#messages p.user {
+  background: var(--accent);
+  color: #fff;
+  align-self: flex-start;
+}
+
+#messages p.me {
+  background: #e5e7eb;
+  align-self: flex-end;
+}
+
+/* Form & controls */
+form {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#messageInput {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  outline: none;
+  font-size: 1rem;
+}
+
+#messageInput:focus {
+  border-color: var(--accent);
+}
+
+button {
+  padding: 0 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.2s;
+}
+
+button#sendBtn {
+  background: var(--accent);
+  color: #fff;
+}
+
+button#sendBtn:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+button#emojiBtn, button#stickerBtn {
+  width: 45px;
+  height: 45px;
+  font-size: 1.2em;
+  background: #6b21a8;
+  color: #fff;
+}
+
+button#emojiBtn:hover, button#stickerBtn:hover {
+  background: #4c1d95;
+}
+
+#emojiPanel, #stickerPanel {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  display: none;
+  max-width: 300px;
+}
+
+#emojiPanel span, #stickerPanel img {
+  cursor: pointer;
+  font-size: 1.5em;
+  transition: 0.2s;
+}
+
+#emojiPanel span:hover, #stickerPanel img:hover {
+  transform: scale(1.2);
+}
+
+/* Logout button */
+#logoutBtn {
+  margin-top: 15px;
+  background: var(--danger);
+  color: #fff;
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+#logoutBtn:hover {
+  background: var(--danger-dark);
+}
 </style>
 </head>
 <body>
+
 <div class="sidebar">
   <h3>Groups</h3>
   <ul id="groupList">
@@ -137,7 +206,6 @@
 <div class="chat-window">
   <div id="messages"></div>
 
-  <!-- Emoji & Sticker Panels -->
   <div id="emojiPanel">
     <span>😀</span><span>😂</span><span>😍</span><span>😎</span>
     <span>🥳</span><span>😢</span><span>🤔</span><span>😡</span>
@@ -150,7 +218,7 @@
 
   <form id="messageForm">
     <input type="text" id="messageInput" placeholder="Type a message..." required>
-    <button type="submit">Send</button>
+    <button type="submit" id="sendBtn">Send</button>
     <button type="button" id="emojiBtn">😃</button>
     <button type="button" id="stickerBtn">🎴</button>
     <input type="file" id="fileInput" accept="image/*,video/*">
@@ -159,36 +227,29 @@
 </div>
 
 <script>
-  // Toggle emoji/sticker panels
-  const emojiBtn = document.getElementById('emojiBtn');
-  const stickerBtn = document.getElementById('stickerBtn');
-  const emojiPanel = document.getElementById('emojiPanel');
-  const stickerPanel = document.getElementById('stickerPanel');
-  const input = document.getElementById('messageInput');
+const emojiBtn = document.getElementById('emojiBtn');
+const stickerBtn = document.getElementById('stickerBtn');
+const emojiPanel = document.getElementById('emojiPanel');
+const stickerPanel = document.getElementById('stickerPanel');
+const input = document.getElementById('messageInput');
 
-  emojiBtn.addEventListener('click', () => {
-    emojiPanel.style.display = emojiPanel.style.display === 'flex' ? 'none' : 'flex';
-    stickerPanel.style.display = 'none';
-  });
+emojiBtn.addEventListener('click', () => {
+  emojiPanel.style.display = emojiPanel.style.display === 'flex' ? 'none' : 'flex';
+  stickerPanel.style.display = 'none';
+});
 
-  stickerBtn.addEventListener('click', () => {
-    stickerPanel.style.display = stickerPanel.style.display === 'flex' ? 'none' : 'flex';
-    emojiPanel.style.display = 'none';
-  });
+stickerBtn.addEventListener('click', () => {
+  stickerPanel.style.display = stickerPanel.style.display === 'flex' ? 'none' : 'flex';
+  emojiPanel.style.display = 'none';
+});
 
-  // Insert emoji
-  emojiPanel.querySelectorAll('span').forEach(e => {
-    e.addEventListener('click', () => {
-      input.value += e.textContent;
-    });
-  });
+emojiPanel.querySelectorAll('span').forEach(e => {
+  e.addEventListener('click', () => { input.value += e.textContent; });
+});
 
-  // Insert sticker as placeholder text
-  stickerPanel.querySelectorAll('img').forEach(s => {
-    s.addEventListener('click', () => {
-      input.value += `[sticker:${s.src}]`;
-    });
-  });
+stickerPanel.querySelectorAll('img').forEach(s => {
+  s.addEventListener('click', () => { input.value += `[sticker:${s.src}]`; });
+});
 </script>
 
 <script src="js/utils.js"></script>
