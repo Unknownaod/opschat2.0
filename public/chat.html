@@ -10,43 +10,29 @@
     margin: 0;
     display: flex;
     height: 100vh;
-    background: #f0f0f0;
+    background: linear-gradient(135deg, #e0c3fc, #8ec5fc); /* purple-blue gradient */
   }
   .sidebar {
     width: 250px;
-    background: linear-gradient(180deg, #2575fc, #6a11cb);
+    background: linear-gradient(180deg, #6a11cb, #2575fc);
     color: #fff;
     display: flex;
     flex-direction: column;
     padding: 20px;
   }
-  .sidebar h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.5em;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.4);
-  }
-  #chatList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex: 1;
-    overflow-y: auto;
-  }
+  .sidebar h3 { margin: 0 0 20px 0; font-size: 1.5em; text-shadow: 1px 1px 5px rgba(0,0,0,0.4); }
+  #chatList { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
   #chatList li {
-    padding: 12px;
-    margin-bottom: 8px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
+    padding: 12px; margin-bottom: 8px;
+    border-radius: 12px; cursor: pointer; transition: 0.2s;
   }
   #chatList li:hover { background: rgba(255,255,255,0.2); }
 
   .chat-window {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    flex: 1; display: flex; flex-direction: column;
     padding: 20px;
-    background: linear-gradient(180deg, #ffffff, #e5e5e5);
+    background: linear-gradient(180deg, #ffffff, #e0e0e0);
+    position: relative;
   }
   #messages { flex: 1; overflow-y: auto; margin-bottom: 10px; }
   #messages p {
@@ -59,20 +45,45 @@
   #messages p:nth-child(odd) { background: #2575fc; color: #fff; align-self: flex-start; }
   #messages p:nth-child(even) { background: #d1d1d1; align-self: flex-end; }
 
-  form { display: flex; margin-top: 10px; }
+  form { display: flex; margin-top: 10px; position: relative; }
   #messageInput { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ccc; }
   button {
-    padding: 12px 18px;
-    margin-left: 5px;
-    border: none;
-    border-radius: 12px;
-    background: #2575fc;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
+    padding: 12px 18px; margin-left: 5px;
+    border: none; border-radius: 12px; background: #2575fc; color: #fff;
+    cursor: pointer; transition: 0.2s;
   }
   button:hover { background: #1458a3; }
-  #fileInput { margin-left: 5px; }
+
+  #emojiBtn, #stickerBtn {
+    margin-left: 5px;
+    background: #6a11cb;
+    font-size: 1.2em;
+    border-radius: 50%;
+    width: 45px; height: 45px;
+  }
+  #emojiBtn:hover, #stickerBtn:hover { background: #4e0fa1; }
+
+  #emojiPanel, #stickerPanel {
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    max-width: 300px;
+    flex-wrap: wrap;
+    display: flex;
+    gap: 8px;
+  }
+  #emojiPanel span, #stickerPanel img {
+    cursor: pointer;
+    font-size: 1.5em;
+    transition: 0.2s;
+  }
+  #emojiPanel span:hover, #stickerPanel img:hover { transform: scale(1.2); }
+
   #logoutBtn { margin-top: 15px; background: #ff4d4f; }
   #logoutBtn:hover { background: #c70000; }
 </style>
@@ -88,13 +99,60 @@
 </div>
 <div class="chat-window">
   <div id="messages"></div>
+
+  <!-- Emoji & Sticker Panels -->
+  <div id="emojiPanel">
+    <span>😀</span><span>😂</span><span>😍</span><span>😎</span>
+    <span>🥳</span><span>😢</span><span>🤔</span><span>😡</span>
+  </div>
+  <div id="stickerPanel">
+    <img src="https://i.imgur.com/1.png" width="50" height="50">
+    <img src="https://i.imgur.com/2.png" width="50" height="50">
+    <img src="https://i.imgur.com/3.png" width="50" height="50">
+  </div>
+
   <form id="messageForm">
     <input type="text" id="messageInput" placeholder="Type a message..." required>
     <button type="submit">Send</button>
+    <button type="button" id="emojiBtn">😃</button>
+    <button type="button" id="stickerBtn">🎴</button>
     <input type="file" id="fileInput" accept="image/*,video/*">
   </form>
   <button id="logoutBtn">Logout</button>
 </div>
+
+<script>
+  // Toggle emoji/sticker panels
+  const emojiBtn = document.getElementById('emojiBtn');
+  const stickerBtn = document.getElementById('stickerBtn');
+  const emojiPanel = document.getElementById('emojiPanel');
+  const stickerPanel = document.getElementById('stickerPanel');
+  const input = document.getElementById('messageInput');
+
+  emojiBtn.addEventListener('click', () => {
+    emojiPanel.style.display = emojiPanel.style.display === 'flex' ? 'none' : 'flex';
+    stickerPanel.style.display = 'none';
+  });
+
+  stickerBtn.addEventListener('click', () => {
+    stickerPanel.style.display = stickerPanel.style.display === 'flex' ? 'none' : 'flex';
+    emojiPanel.style.display = 'none';
+  });
+
+  // Insert emoji
+  emojiPanel.querySelectorAll('span').forEach(e => {
+    e.addEventListener('click', () => {
+      input.value += e.textContent;
+    });
+  });
+
+  // Insert sticker as text placeholder (can later render image messages)
+  stickerPanel.querySelectorAll('img').forEach(s => {
+    s.addEventListener('click', () => {
+      input.value += `[sticker:${s.src}]`;
+    });
+  });
+</script>
 <script src="js/utils.js"></script>
 <script src="js/chat.js"></script>
 </body>
