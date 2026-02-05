@@ -253,131 +253,17 @@ body {
 </div>
 
 <script>
-  // ===== AUTH CHECK =====
   const token = localStorage.getItem('chatsphere_token');
-  const username = localStorage.getItem('chatsphere_user');
 
-  if (!token || !username) {
+  // ===== AUTH CHECK =====
+  if (!token) {
     window.location.href = '/login.html';
   }
-
-  // ===== SOCKET CONNECTION (SECURE) =====
-  const socket = io('https://opschat-backend.onrender.com', {
-    auth: { token }
-  });
-
-  socket.on('connect_error', err => {
-    console.error('Socket auth failed:', err.message);
-    localStorage.clear();
-    window.location.href = '/login.html';
-  });
-
-  const chatList = document.getElementById('chatList');
-  const messages = document.getElementById('messages');
-  const emptyState = document.getElementById('emptyState');
-  const messageForm = document.getElementById('messageForm');
-  const input = document.getElementById('messageInput');
-  const headerTitle = document.querySelector('.chat-header .title');
-  const headerAvatar = document.querySelector('.chat-avatar');
-  const newChatBtn = document.getElementById('newChatBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  let currentRoom = null;
-
-  // ===== LOGOUT =====
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('chatsphere_token');
-      localStorage.removeItem('chatsphere_user');
-      window.location.href = '/login.html';
-    });
-  }
-
-  // ===== CREATE / OPEN CHAT =====
-  newChatBtn.addEventListener('click', async () => {
-    const chatName = prompt('Enter username:');
-    if (!chatName || chatName === username) return;
-
-    const room = ['private', username, chatName].sort().join('_');
-
-    const li = document.createElement('li');
-    li.dataset.room = room;
-    li.innerHTML = `
-      <div class="chat-avatar">${chatName[0].toUpperCase()}</div>
-      <div class="chat-meta">
-        <div class="chat-name">${chatName}</div>
-        <div class="chat-last">New chat</div>
-      </div>
-    `;
-
-    chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
-    li.classList.add('active');
-    chatList.appendChild(li);
-
-    openChat(chatName, room, li);
-  });
-
-  function openChat(name, room, el) {
-    chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
-
-    headerTitle.textContent = name;
-    headerAvatar.textContent = name[0].toUpperCase();
-
-    emptyState.style.display = 'none';
-    messages.style.display = 'flex';
-    messageForm.style.display = 'flex';
-
-    messages.innerHTML = '';
-    currentRoom = room;
-
-    socket.emit('joinRoom', { room });
-  }
-
-  chatList.addEventListener('click', e => {
-    const li = e.target.closest('li');
-    if (!li) return;
-
-    openChat(
-      li.querySelector('.chat-name').textContent,
-      li.dataset.room,
-      li
-    );
-  });
-
-  // ===== SEND MESSAGE =====
-  messageForm.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!input.value.trim() || !currentRoom) return;
-
-    socket.emit('sendMessage', {
-      room: currentRoom,
-      message: input.value
-    });
-
-    input.value = '';
-  });
-
-  // ===== RECEIVE MESSAGE =====
-  socket.on('receiveMessage', msg => {
-    if (msg.room !== currentRoom) return;
-
-    const div = document.createElement('div');
-    div.className = 'message ' + (msg.username === username ? 'self' : 'other');
-    div.textContent = msg.message;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  });
-
-  socket.on('systemMessage', msg => {
-    if (msg.room !== currentRoom) return;
-
-    const div = document.createElement('div');
-    div.className = 'message other';
-    div.textContent = msg.message;
-    messages.appendChild(div);
-  });
 </script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/chat.js"></script>
+
 
 </body>
 </html>
