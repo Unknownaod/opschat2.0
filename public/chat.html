@@ -7,30 +7,29 @@
 <style>
   /* ================= Body ================= */
   body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
     margin: 0;
     display: flex;
     height: 100vh;
-    background: linear-gradient(135deg, #0f0f0f, #1a1a1a); /* dark gradient */
-    color: #fff;
+    background-color: #36393f;
+    color: #dcddde;
   }
 
   /* ================= Sidebar ================= */
   .sidebar {
-    width: 250px;
-    background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
-    color: #fff;
+    width: 260px;
+    background-color: #2f3136;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    border-radius: 0 20px 20px 0;
-    box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+    padding: 20px 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
   }
 
   .sidebar h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.8em;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    font-size: 1.6em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #fff;
   }
 
   /* Chat List */
@@ -39,30 +38,39 @@
     padding: 0;
     margin: 0;
     flex: 1;
+    overflow-y: auto;
   }
+
   #chatList li {
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 12px;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: 0.2s;
-    background: rgba(255,255,255,0.05);
+    color: #b9bbbe;
   }
-  #chatList li:hover { background: rgba(255,255,255,0.15); }
+
+  #chatList li:hover {
+    background-color: #393c43;
+    color: #fff;
+  }
 
   /* New Chat Button */
   #newChatBtn {
-    padding: 12px;
-    border-radius: 12px;
+    padding: 10px 15px;
+    border-radius: 6px;
     border: none;
-    background: #4facfe;
+    background-color: #7289da;
     color: #fff;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: 0.3s;
     margin-top: 10px;
+    transition: 0.2s;
   }
-  #newChatBtn:hover { background: #00f2fe; }
+
+  #newChatBtn:hover {
+    background-color: #5b6eae;
+  }
 
   /* ================= Chat Window ================= */
   .chat-window {
@@ -70,72 +78,97 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background: #121212;
-    border-radius: 20px;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-    position: relative;
+    background-color: #36393f;
+    overflow: hidden;
   }
 
   #messages {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 10px;
+    padding-right: 10px;
   }
-  #messages p {
+
+  .message {
+    display: flex;
+    margin-bottom: 10px;
+    max-width: 70%;
+  }
+
+  .message.own {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+
+  .message .content {
+    background-color: #40444b;
     padding: 10px 15px;
     border-radius: 20px;
-    margin: 6px 0;
-    max-width: 70%;
+    color: #dcddde;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
-  #messages p:nth-child(odd) { background: #4facfe; color: #fff; align-self: flex-start; }
-  #messages p:nth-child(even) { background: #333; color: #fff; align-self: flex-end; }
+
+  .message.own .content {
+    background-color: #7289da;
+    color: #fff;
+  }
 
   /* ================= Form & Inputs ================= */
   form {
     display: flex;
+    align-items: center;
     margin-top: 10px;
-    position: relative;
+    gap: 5px;
   }
+
   #messageInput {
     flex: 1;
-    padding: 12px;
+    padding: 10px 15px;
     border-radius: 20px;
-    border: 1px solid #333;
-    background: #1a1a1a;
-    color: #fff;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    border: none;
+    background-color: #40444b;
+    color: #dcddde;
     font-size: 1em;
+  }
+
+  #messageInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #7289da;
   }
 
   button {
     border-radius: 20px;
-    background: #4facfe;
+    background-color: #7289da;
     color: #fff;
-    padding: 12px 18px;
-    margin-left: 5px;
+    padding: 10px 15px;
     border: none;
     cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
+    font-weight: 500;
+    transition: 0.2s;
   }
-  button:hover { background: #00f2fe; }
+
+  button:hover {
+    background-color: #5b6eae;
+  }
 
   #emojiBtn, #stickerBtn {
-    width: 45px; height: 45px;
+    width: 40px;
+    height: 40px;
     font-size: 1.2em;
-    background: #6a11cb;
     border-radius: 50%;
+    background-color: #4f545c;
   }
-  #emojiBtn:hover, #stickerBtn:hover { background: #4e0fa1; }
+
+  #emojiBtn:hover, #stickerBtn:hover {
+    background-color: #5b5f65;
+  }
 
   /* Emoji & Sticker Panels */
   #emojiPanel, #stickerPanel {
     position: absolute;
     bottom: 60px;
-    left: 10px;
-    background: #1a1a1a;
+    left: 20px;
+    background-color: #2f3136;
     border-radius: 12px;
     padding: 10px;
     display: flex;
@@ -145,19 +178,25 @@
     display: none;
     max-width: 300px;
   }
+
   #emojiPanel span, #stickerPanel img {
     cursor: pointer;
     font-size: 1.5em;
     transition: 0.2s;
   }
-  #emojiPanel span:hover, #stickerPanel img:hover { transform: scale(1.2); }
 
-  /* Logout button */
-  #logoutBtn {
-    margin-top: 15px;
-    background: #ff4d4f;
+  #emojiPanel span:hover, #stickerPanel img:hover {
+    transform: scale(1.2);
   }
-  #logoutBtn:hover { background: #c70000; }
+
+  #logoutBtn {
+    margin-top: 10px;
+    background-color: #f04747;
+  }
+
+  #logoutBtn:hover {
+    background-color: #d93636;
+  }
 </style>
 </head>
 <body>
@@ -165,13 +204,15 @@
 <div class="sidebar">
   <h3>Chats</h3>
   <ul id="chatList">
-    <!-- Chats will be dynamically added -->
+    <!-- Chats dynamically added -->
   </ul>
   <button id="newChatBtn">+ New Private Chat</button>
 </div>
 
 <div class="chat-window">
-  <div id="messages"></div>
+  <div id="messages">
+    <!-- Messages dynamically added -->
+  </div>
 
   <!-- Emoji & Sticker Panels -->
   <div id="emojiPanel">
@@ -185,7 +226,7 @@
   </div>
 
   <form id="messageForm">
-    <input type="text" id="messageInput" placeholder="Type a message..." required>
+    <input type="text" id="messageInput" placeholder="Message #general..." required>
     <button type="submit">Send</button>
     <button type="button" id="emojiBtn">😃</button>
     <button type="button" id="stickerBtn">🎴</button>
