@@ -2,49 +2,280 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Chatsphere - Welcome</title>
+<title>Chatsphere — Secure Messaging</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body {
-    background: linear-gradient(135deg, #4facfe, #00f2fe); /* professional teal-blue */
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+:root {
+    --bg: #f5f7fa;
+    --white: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --accent-dark: #1d4ed8;
 }
 
-.homepage {
-    background: rgba(255,255,255,0.05);
-    padding: 60px;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* ---------- Header ---------- */
+
+header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    margin-left: 24px;
+}
+
+.nav .cta {
+    padding: 10px 18px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.nav .cta:hover {
+    background: var(--accent-dark);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+    padding: 96px 24px;
+    background: var(--white);
+}
+
+.hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
     text-align: center;
 }
-h1 { font-size: 3em; font-weight: 700; }
-.buttons a {
-    padding: 15px 40px;
-    border-radius: 20px;
-    background: #fff;
-    color: #4facfe;
-    font-weight: 600;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: 0.3s;
+
+.hero h1 {
+    font-size: 3rem;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
 }
-.buttons a:hover {
-    background: rgba(255,255,255,0.9);
-    transform: scale(1.05);
+
+.hero p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 40px;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.hero-buttons a {
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.hero-buttons .primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.hero-buttons .primary:hover {
+    background: var(--accent-dark);
+}
+
+.hero-buttons .secondary {
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+/* ---------- Features ---------- */
+
+.features {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 32px;
+}
+
+.feature {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+}
+
+.feature h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* ---------- Trust Section ---------- */
+
+.trust {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 72px 24px;
+    text-align: center;
+}
+
+.trust h2 {
+    font-size: 2rem;
+    margin-bottom: 16px;
+}
+
+.trust p {
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--muted);
+}
+
+/* ---------- CTA ---------- */
+
+.final-cta {
+    padding: 96px 24px;
+    text-align: center;
+}
+
+.final-cta h2 {
+    font-size: 2.3rem;
+    margin-bottom: 16px;
+}
+
+.final-cta p {
+    color: var(--muted);
+    margin-bottom: 32px;
+}
+
+.final-cta a {
+    text-decoration: none;
+    padding: 16px 40px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 10px;
+}
+
+.final-cta a:hover {
+    background: var(--accent-dark);
+}
+
+/* ---------- Footer ---------- */
+
+footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
 }
 </style>
 </head>
+
 <body>
-<div class="homepage">
-  <h1>Chatsphere</h1>
-  <p>Secure, fast, and vibrant messaging for everyone.</p>
-  <div class="buttons">
-    <a href="register.html">Sign Up</a>
-    <a href="login.html">Log In</a>
-  </div>
-</div>
+
+<header>
+    <div class="nav">
+        <div class="logo">Chatsphere</div>
+        <div>
+            <a href="#">Features</a>
+            <a href="#">Security</a>
+            <a href="login.html">Log In</a>
+            <a href="register.html" class="cta">Get Started</a>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-inner">
+        <h1>Messaging built for speed, privacy, and clarity</h1>
+        <p>
+            Chatsphere is a secure messaging platform designed for people who
+            value reliability, privacy, and a distraction-free experience.
+        </p>
+        <div class="hero-buttons">
+            <a href="register.html" class="primary">Create an Account</a>
+            <a href="login.html" class="secondary">Sign In</a>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature">
+        <h3>End-to-End Encryption</h3>
+        <p>Your conversations stay private. Messages are encrypted and accessible only to intended participants.</p>
+    </div>
+    <div class="feature">
+        <h3>Fast & Reliable</h3>
+        <p>Optimized infrastructure ensures messages are delivered instantly, even at scale.</p>
+    </div>
+    <div class="feature">
+        <h3>Simple by Design</h3>
+        <p>No clutter, no gimmicks. Just clean, focused communication that works.</p>
+    </div>
+</section>
+
+<section class="trust">
+    <h2>Security you can trust</h2>
+    <p>
+        Chatsphere is built with modern security practices, privacy-first
+        architecture, and continuous monitoring to keep your data safe.
+    </p>
+</section>
+
+<section class="final-cta">
+    <h2>Get started with Chatsphere today</h2>
+    <p>Create an account in seconds and experience secure messaging done right.</p>
+    <a href="register.html">Sign Up Free</a>
+</section>
+
+<footer>
+    © 2026 Chatsphere. All rights reserved.
+</footer>
+
 </body>
 </html>
