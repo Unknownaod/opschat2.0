@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatsphere - Call</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #43cea2, #185a9d); /* teal-to-blue gradient */
+    color: #fff;
+  }
+  .call-header {
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  }
+  .call-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  video {
+    width: 60%;
+    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .controls {
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    gap: 15px;
+  }
+  .controls button {
+    background: #ff4d4f;
+    border: none;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    font-size: 1.2em; font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .controls button:hover { background: #c70000; transform: scale(1.1); }
+  .controls .mute { background: #2575fc; }
+  .controls .mute:hover { background: #1458a3; }
+</style>
+</head>
+<body>
+<div class="call-header">Calling: John Doe</div>
+<div class="call-main">
+  <video id="localVideo" autoplay muted></video>
+  <video id="remoteVideo" autoplay></video>
+  <div class="controls">
+    <button class="mute">🎤</button>
+    <button class="end">📞</button>
+    <button class="video">🎥</button>
+  </div>
+</div>
+<script>
+  // Placeholder JS for WebRTC integration
+  const localVideo = document.getElementById('localVideo');
+  const remoteVideo = document.getElementById('remoteVideo');
+
+  async function initLocalVideo() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      localVideo.srcObject = stream;
+    } catch (err) {
+      console.error('Error accessing camera/microphone:', err);
+    }
+  }
+
+  initLocalVideo();
+</script>
+</body>
+</html>
