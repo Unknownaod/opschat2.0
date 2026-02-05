@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatsphere - Chat</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+</head>
+<body>
+<div class="chat-container">
+  <div class="sidebar">
+    <h3>Chats</h3>
+    <ul id="chatList"></ul>
+  </div>
+  <div class="chat-window">
+    <div id="messages"></div>
+    <form id="messageForm">
+      <input type="text" id="messageInput" placeholder="Type a message..." required>
+      <button type="submit">Send</button>
+      <input type="file" id="fileInput" accept="image/*,video/*">
+    </form>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</div>
+<script src="js/utils.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>
