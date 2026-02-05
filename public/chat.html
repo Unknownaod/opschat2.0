@@ -253,85 +253,74 @@ body {
 </div>
 
 <script>
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!res.ok) return location.href = '/login.html';
+  const username = localStorage.getItem('username');
 
-      const user = await res.json();
-      window.currentUser = user;
-
-      initChat();
-    } catch (err) {
-      location.href = '/login.html';
-    }
+  // ===== AUTH CHECK =====
+  if (!username) {
+    window.location.href = '/login.html';
   }
 
-  checkAuth();
+  const chatList = document.getElementById('chatList');
+  const messages = document.getElementById('messages');
+  const emptyState = document.getElementById('emptyState');
+  const messageForm = document.getElementById('messageForm');
+  const input = document.getElementById('messageInput');
+  const headerTitle = document.querySelector('.chat-header .title');
+  const headerAvatar = document.querySelector('.chat-avatar');
+  const newChatBtn = document.getElementById('newChatBtn');
 
-  function initChat() {
-    const chatList = document.getElementById('chatList');
-    const messages = document.getElementById('messages');
-    const emptyState = document.getElementById('emptyState');
-    const messageForm = document.getElementById('messageForm');
-    const input = document.getElementById('messageInput');
-    const headerTitle = document.querySelector('.chat-header .title');
-    const headerAvatar = document.querySelector('.chat-avatar');
-    const newChatBtn = document.getElementById('newChatBtn');
+  newChatBtn.addEventListener('click', async () => {
+    const chatName = prompt('Enter chat name:');
+    if (!chatName) return;
 
-    newChatBtn.addEventListener('click', () => {
-      const chatName = prompt('Enter chat name:');
-      if (!chatName) return;
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="chat-avatar">${chatName[0].toUpperCase()}</div>
+      <div class="chat-meta">
+        <div class="chat-name">${chatName}</div>
+        <div class="chat-last">New chat</div>
+      </div>
+    `;
 
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div class="chat-avatar">${chatName[0].toUpperCase()}</div>
-        <div class="chat-meta">
-          <div class="chat-name">${chatName}</div>
-          <div class="chat-last">New chat</div>
-        </div>
-      `;
+    chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
+    li.classList.add('active');
+    chatList.appendChild(li);
 
-      chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
-      li.classList.add('active');
-      chatList.appendChild(li);
+    openChat(chatName, li);
+  });
 
-      openChat(chatName, li);
-    });
+  function openChat(name, el) {
+    chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
 
-    function openChat(name, el) {
-      chatList.querySelectorAll('li').forEach(x => x.classList.remove('active'));
-      el.classList.add('active');
+    headerTitle.textContent = name;
+    headerAvatar.textContent = name[0].toUpperCase();
 
-      headerTitle.textContent = name;
-      headerAvatar.textContent = name[0].toUpperCase();
+    emptyState.style.display = 'none';
+    messages.style.display = 'flex';
+    messageForm.style.display = 'flex';
 
-      emptyState.style.display = 'none';
-      messages.style.display = 'flex';
-      messageForm.style.display = 'flex';
-
-      messages.innerHTML = `<div class="message other">Welcome to ${name}</div>`;
-    }
-
-    chatList.addEventListener('click', e => {
-      const li = e.target.closest('li');
-      if (!li) return;
-      openChat(li.querySelector('.chat-name').textContent, li);
-    });
-
-    messageForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!input.value.trim()) return;
-
-      const div = document.createElement('div');
-      div.className = 'message self';
-      div.textContent = input.value;
-      messages.appendChild(div);
-
-      input.value = '';
-      messages.scrollTop = messages.scrollHeight;
-    });
+    messages.innerHTML = `<div class="message other">Welcome to ${name}</div>`;
   }
+
+  chatList.addEventListener('click', e => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    openChat(li.querySelector('.chat-name').textContent, li);
+  });
+
+  messageForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!input.value.trim()) return;
+
+    const div = document.createElement('div');
+    div.className = 'message self';
+    div.textContent = input.value;
+    messages.appendChild(div);
+
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+  });
 </script>
 
 </body>
