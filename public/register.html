@@ -4,26 +4,26 @@
 <meta charset="UTF-8">
 <title>Chatsphere - Register</title>
 <style>
-  body {
-    margin: 0;
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2); /* purple → deep violet */
     font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #f54ea2, #ff7676); /* pink/purple gradient */
+    height: 100vh;
     color: #fff;
-  }
-  .auth-container {
-    background: rgba(0,0,0,0.3);
+}
+
+.auth-container {
+    background: rgba(255,255,255,0.05);
     padding: 50px;
-    border-radius: 25px;
-    width: 350px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     text-align: center;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-  }
-  h2 { margin-bottom: 30px; font-size: 2em; text-shadow: 1px 1px 6px rgba(0,0,0,0.3); }
-  input {
+}
+
+input {
     width: 90%;
     padding: 14px;
     margin: 10px 0;
@@ -31,21 +31,28 @@
     border: none;
     outline: none;
     font-size: 1em;
-  }
-  button {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+input::placeholder { color: rgba(255,255,255,0.7); }
+
+button {
     width: 95%;
     padding: 14px;
-    margin-top: 20px;
-    border: none;
     border-radius: 12px;
-    background: #fff;
-    color: #ff7676;
-    font-weight: bold;
-    font-size: 1em;
+    border: none;
+    background: #00f2fe; /* professional cyan */
+    color: #fff;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s all;
-  }
-  button:hover { background: #f0f0f0; transform: scale(1.05); }
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #4facfe;
+}
   p { margin-top: 20px; font-size: 0.95em; }
   a { color: #fff; text-decoration: underline; }
 </style>
