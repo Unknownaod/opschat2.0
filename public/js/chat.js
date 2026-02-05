@@ -1,5 +1,5 @@
 // =======================
-// CHAT.JS - Messages + Emoji/Sticker Support + MongoDB Backend
+// CHAT.JS - Secure Messages + JWT + MongoDB Backend
 // =======================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,34 +10,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatList = document.getElementById('chatList');
   const newChatBtn = document.getElementById('newChatBtn');
 
+  const BACKEND_URL = 'https://opschat-backend.onrender.com';
+
   // =======================
-  // Check login
+  // AUTH CHECK
   // =======================
+  const token = localStorage.getItem('chatsphere_token');
   const user = localStorage.getItem('chatsphere_user');
-  if (!user) {
+
+  if (!token || !user) {
     window.location.href = 'login.html';
     return;
   }
 
   // =======================
-  // Socket.IO connection
+  // Socket.IO (SECURE)
   // =======================
-  const socket = io('https://opschat-backend.onrender.com');
+  const socket = io(BACKEND_URL, {
+    auth: { token }
+  });
+
+  socket.on('connect_error', () => {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  });
 
   // =======================
   // Active chat tracking
   // =======================
-  let activeChat = null; // will store the username or private room
+  let activeChat = null;
 
   // =======================
   // Handle new private chat
   // =======================
   newChatBtn.addEventListener('click', async () => {
-    const searchName = prompt("Enter username or handle to start a chat:");
+    const searchName = prompt("Enter username to start a chat:");
     if (!searchName) return;
 
-    // Search user via backend
-    const res = await fetch(`https://opschat-backend.onrender.com/searchUser?username=${encodeURIComponent(searchName)}`);
+    const res = await fetch(`${BACKEND_URL}/searchUser?username=${encodeURIComponent(searchName)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
     const data = await res.json();
 
     if (!data.found) {
@@ -45,33 +60,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const chatId = `private_${[user, data.username].sort().join('_')}`; // unique private chat ID
+    const chatId = `private_${[user, data.username].sort().join('_')}`;
 
-    // Join private room
     if (activeChat) socket.emit('leaveRoom', { room: activeChat });
-    socket.emit('joinRoom', { room: chatId, username: user });
+    socket.emit('joinRoom', { room: chatId });
     activeChat = chatId;
 
-    // Add to chat list if not exists
-    if (![...chatList.children].some(li => li.textContent === data.username)) {
+    if (![...chatList.children].some(li => li.dataset.user === data.username)) {
       const li = document.createElement('li');
+      li.dataset.user = data.username;
       li.textContent = data.username;
       li.addEventListener('click', () => switchChat(data.username));
       chatList.appendChild(li);
     }
 
-    // Clear messages for new chat
     messages.innerHTML = '';
   });
 
   // =======================
-  // Switch to a different chat
+  // Switch chat
   // =======================
   function switchChat(targetUser) {
-    const newRoom = `private_${[user, targetUser].sort().join('_')}`;
+    const room = `private_${[user, targetUser].sort().join('_')}`;
     if (activeChat) socket.emit('leaveRoom', { room: activeChat });
-    socket.emit('joinRoom', { room: newRoom, username: user });
-    activeChat = newRoom;
+    socket.emit('joinRoom', { room });
+    activeChat = room;
     messages.innerHTML = '';
   }
 
@@ -79,9 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Receive messages
   // =======================
   socket.on('receiveMessage', (msgObj) => {
-    // Only display if message belongs to the active chat
     if (msgObj.room === activeChat) {
-      appendMessage(msgObj.username, msgObj.message, msgObj.time);
+      appendMessage(msgObj.username, msgObj.message);
     }
   });
 
@@ -105,15 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const msg = messageInput.value.trim();
     if (!msg || !activeChat) return;
 
-    socket.emit('sendMessage', { room: activeChat, message: msg, username: user });
-    appendMessage(user, msg, new Date().toISOString());
+    socket.emit('sendMessage', { room: activeChat, message: msg });
     messageInput.value = '';
   });
 
   // =======================
   // Append message helper
   // =======================
-  function appendMessage(sender, msg, timestamp) {
+  function appendMessage(sender, msg) {
     const p = document.createElement('p');
 
     if (msg.startsWith('[sticker:') && msg.endsWith(']')) {
@@ -132,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
       p.style.alignSelf = 'flex-end';
       p.style.background = '#4facfe';
       p.style.color = '#fff';
-    } else if (sender !== 'System') {
+    } else {
       p.style.alignSelf = 'flex-start';
       p.style.background = '#333';
       p.style.color = '#fff';
@@ -143,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     p.style.margin = '6px 0';
     p.style.maxWidth = '70%';
     p.style.wordBreak = 'break-word';
+
     messages.appendChild(p);
     messages.scrollTop = messages.scrollHeight;
   }
@@ -151,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Logout
   // =======================
   logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('chatsphere_user');
+    localStorage.clear();
     window.location.href = 'login.html';
   });
 });
