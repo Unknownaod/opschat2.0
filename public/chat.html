@@ -5,70 +5,107 @@
 <title>Chatsphere - Chat</title>
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <style>
+  /* ================= Body ================= */
   body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     display: flex;
     height: 100vh;
-    background: linear-gradient(135deg, #f0f4f8, #d9e2ec); /* light professional gradient */
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a); /* dark gradient */
+    color: #fff;
   }
 
-  /* Sidebar */
+  /* ================= Sidebar ================= */
   .sidebar {
     width: 250px;
-    background: linear-gradient(180deg, #4facfe, #00f2fe); /* teal gradient */
+    background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
     color: #fff;
     display: flex;
     flex-direction: column;
     padding: 20px;
     border-radius: 0 20px 20px 0;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+    box-shadow: 5px 0 20px rgba(0,0,0,0.5);
   }
+
   .sidebar h3 {
     margin: 0 0 20px 0;
-    font-size: 1.5em;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    font-size: 1.8em;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
   }
-  #chatList li, #groupList li {
+
+  /* Chat List */
+  #chatList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+  }
+  #chatList li {
     padding: 12px;
     margin-bottom: 10px;
     border-radius: 12px;
     cursor: pointer;
     transition: 0.2s;
+    background: rgba(255,255,255,0.05);
   }
-  #chatList li:hover, #groupList li:hover { background: rgba(255,255,255,0.15); }
+  #chatList li:hover { background: rgba(255,255,255,0.15); }
 
-  /* Chat window */
+  /* New Chat Button */
+  #newChatBtn {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #4facfe;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+  }
+  #newChatBtn:hover { background: #00f2fe; }
+
+  /* ================= Chat Window ================= */
   .chat-window {
     flex: 1;
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background: #f9f9f9;
+    background: #121212;
     border-radius: 20px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
     position: relative;
   }
-  #messages { flex: 1; overflow-y: auto; margin-bottom: 10px; }
+
+  #messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
   #messages p {
     padding: 10px 15px;
     border-radius: 20px;
     margin: 6px 0;
     max-width: 70%;
     word-break: break-word;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
   #messages p:nth-child(odd) { background: #4facfe; color: #fff; align-self: flex-start; }
-  #messages p:nth-child(even) { background: #e0e0e0; align-self: flex-end; }
+  #messages p:nth-child(even) { background: #333; color: #fff; align-self: flex-end; }
 
-  /* Form & inputs */
-  form { display: flex; margin-top: 10px; position: relative; }
+  /* ================= Form & Inputs ================= */
+  form {
+    display: flex;
+    margin-top: 10px;
+    position: relative;
+  }
   #messageInput {
     flex: 1;
     padding: 12px;
     border-radius: 20px;
-    border: 1px solid #ccc;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #fff;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
     font-size: 1em;
   }
 
@@ -98,13 +135,13 @@
     position: absolute;
     bottom: 60px;
     left: 10px;
-    background: #fff;
+    background: #1a1a1a;
     border-radius: 12px;
     padding: 10px;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     display: none;
     max-width: 300px;
   }
@@ -124,14 +161,15 @@
 </style>
 </head>
 <body>
+
 <div class="sidebar">
   <h3>Chats</h3>
   <ul id="chatList">
-    <li>General</li>
-    <li>Friends</li>
-    <li>Work</li>
+    <!-- Chats will be dynamically added -->
   </ul>
+  <button id="newChatBtn">+ New Private Chat</button>
 </div>
+
 <div class="chat-window">
   <div id="messages"></div>
 
@@ -181,13 +219,27 @@
     });
   });
 
-  // Insert sticker as text placeholder (can later render image messages)
+  // Insert sticker as placeholder
   stickerPanel.querySelectorAll('img').forEach(s => {
     s.addEventListener('click', () => {
       input.value += `[sticker:${s.src}]`;
     });
   });
+
+  // New Private Chat functionality
+  const newChatBtn = document.getElementById('newChatBtn');
+  const chatList = document.getElementById('chatList');
+
+  newChatBtn.addEventListener('click', () => {
+    const chatName = prompt("Enter the name for the new private chat:");
+    if (chatName) {
+      const li = document.createElement('li');
+      li.textContent = chatName;
+      chatList.appendChild(li);
+    }
+  });
 </script>
+
 <script src="js/utils.js"></script>
 <script src="js/chat.js"></script>
 </body>
