@@ -7,8 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageInput = document.getElementById('messageInput');
   const messages = document.getElementById('messages');
   const logoutBtn = document.getElementById('logoutBtn');
+  const chatList = document.getElementById('chatList');
+  const newChatBtn = document.getElementById('newChatBtn');
 
-  // Check if user is logged in
+  // =======================
+  // Check login
+  // =======================
   const user = localStorage.getItem('chatsphere_user');
   if (!user) {
     window.location.href = 'login.html';
@@ -16,32 +20,81 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =======================
-  // Connect to backend Socket.IO
+  // Socket.IO connection
   // =======================
   const socket = io('https://opschat-backend.onrender.com');
 
-  // Default group
-  const groupName = 'General';
-
-  // Join group
-  socket.emit('joinGroup', { username: user, group: groupName });
+  // =======================
+  // Active chat tracking
+  // =======================
+  let activeChat = null; // will store the username or private room
 
   // =======================
-  // Receive previous messages from backend (MongoDB)
+  // Handle new private chat
   // =======================
-  socket.on('receiveMessage', (msgObj) => {
-    appendMessage(msgObj.username, msgObj.message, msgObj.time);
+  newChatBtn.addEventListener('click', async () => {
+    const searchName = prompt("Enter username or handle to start a chat:");
+    if (!searchName) return;
+
+    // Search user via backend
+    const res = await fetch(`https://opschat-backend.onrender.com/searchUser?username=${encodeURIComponent(searchName)}`);
+    const data = await res.json();
+
+    if (!data.found) {
+      alert("User not found!");
+      return;
+    }
+
+    const chatId = `private_${[user, data.username].sort().join('_')}`; // unique private chat ID
+
+    // Join private room
+    if (activeChat) socket.emit('leaveRoom', { room: activeChat });
+    socket.emit('joinRoom', { room: chatId, username: user });
+    activeChat = chatId;
+
+    // Add to chat list if not exists
+    if (![...chatList.children].some(li => li.textContent === data.username)) {
+      const li = document.createElement('li');
+      li.textContent = data.username;
+      li.addEventListener('click', () => switchChat(data.username));
+      chatList.appendChild(li);
+    }
+
+    // Clear messages for new chat
+    messages.innerHTML = '';
   });
 
-  // System messages
-  socket.on('systemMessage', (msg) => {
-    const p = document.createElement('p');
-    p.textContent = `[System] ${msg}`;
-    p.style.fontStyle = 'italic';
-    p.style.alignSelf = 'center';
-    p.style.color = '#555';
-    messages.appendChild(p);
-    messages.scrollTop = messages.scrollHeight;
+  // =======================
+  // Switch to a different chat
+  // =======================
+  function switchChat(targetUser) {
+    const newRoom = `private_${[user, targetUser].sort().join('_')}`;
+    if (activeChat) socket.emit('leaveRoom', { room: activeChat });
+    socket.emit('joinRoom', { room: newRoom, username: user });
+    activeChat = newRoom;
+    messages.innerHTML = '';
+  }
+
+  // =======================
+  // Receive messages
+  // =======================
+  socket.on('receiveMessage', (msgObj) => {
+    // Only display if message belongs to the active chat
+    if (msgObj.room === activeChat) {
+      appendMessage(msgObj.username, msgObj.message, msgObj.time);
+    }
+  });
+
+  socket.on('systemMessage', (msgObj) => {
+    if (msgObj.room === activeChat) {
+      const p = document.createElement('p');
+      p.textContent = `[System] ${msgObj.message}`;
+      p.style.fontStyle = 'italic';
+      p.style.alignSelf = 'center';
+      p.style.color = '#555';
+      messages.appendChild(p);
+      messages.scrollTop = messages.scrollHeight;
+    }
   });
 
   // =======================
@@ -50,23 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
   messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const msg = messageInput.value.trim();
-    if (!msg) return;
+    if (!msg || !activeChat) return;
 
-    // Send to backend
-    socket.emit('sendMessage', { group: groupName, message: msg });
-
-    // Display immediately
+    socket.emit('sendMessage', { room: activeChat, message: msg, username: user });
     appendMessage(user, msg, new Date().toISOString());
     messageInput.value = '';
   });
 
   // =======================
-  // Helper: append message
+  // Append message helper
   // =======================
   function appendMessage(sender, msg, timestamp) {
     const p = document.createElement('p');
 
-    // Sticker detection
     if (msg.startsWith('[sticker:') && msg.endsWith(']')) {
       const src = msg.slice(9, -1);
       const img = document.createElement('img');
@@ -79,15 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
       p.textContent = msg;
     }
 
-    // Style messages
     if (sender === user) {
       p.style.alignSelf = 'flex-end';
       p.style.background = '#4facfe';
       p.style.color = '#fff';
     } else if (sender !== 'System') {
       p.style.alignSelf = 'flex-start';
-      p.style.background = '#e0e0e0';
-      p.style.color = '#000';
+      p.style.background = '#333';
+      p.style.color = '#fff';
     }
 
     p.style.padding = '10px 15px';
