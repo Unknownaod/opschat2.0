@@ -1,5 +1,5 @@
 // =======================
-// CHAT.JS - Messages + Emoji/Sticker Support + Backend
+// CHAT.JS - Messages + Emoji/Sticker Support + MongoDB Backend
 // =======================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,16 +20,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // =======================
   const socket = io('https://opschat-backend.onrender.com');
 
-  // Join default group for now (can be dynamic later)
+  // Default group
   const groupName = 'General';
+
+  // Join group
   socket.emit('joinGroup', { username: user, group: groupName });
 
-  // Receive messages from backend
+  // =======================
+  // Receive previous messages from backend (MongoDB)
+  // =======================
   socket.on('receiveMessage', (msgObj) => {
     appendMessage(msgObj.username, msgObj.message, msgObj.time);
   });
 
-  // Receive system messages
+  // System messages
   socket.on('systemMessage', (msg) => {
     const p = document.createElement('p');
     p.textContent = `[System] ${msg}`;
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Send to backend
     socket.emit('sendMessage', { group: groupName, message: msg });
 
-    // Also display immediately
+    // Display immediately
     appendMessage(user, msg, new Date().toISOString());
     messageInput.value = '';
   });
@@ -75,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       p.textContent = msg;
     }
 
-    // Style own messages
+    // Style messages
     if (sender === user) {
       p.style.alignSelf = 'flex-end';
       p.style.background = '#4facfe';
